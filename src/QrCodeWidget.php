@@ -7,6 +7,12 @@
 
 namespace vxm\mfa;
 
+use Endroid\QrCode\Color\Color;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\RoundBlockSizeMode;
+use Endroid\QrCode\Writer\PngWriter;
 use yii\base\InvalidCallException;
 use yii\base\Widget;
 use yii\helpers\Html;
@@ -43,11 +49,39 @@ class QrCodeWidget extends Widget
     public $image;
 
     /**
+     * @var integer the size of the QR code.
+     */
+    public $size = 300;
+
+    /**
+     * @var integer the margin of the QR code.
+     */
+    public $margin = 10;
+
+    /**
+     * @var \Endroid\QrCode\Color\Color the foreground color of the QR code.
+     */
+    public $foregroundColor = null;
+
+    /**
+     * @var \Endroid\QrCode\Color\Color the background color of the QR code.
+     */
+    public $backgroundColor = null;
+
+    /**
      * @inheritDoc
      */
     public function init()
     {
         $this->ensureUserBehaviorAttached();
+
+        if ($this->foregroundColor === null) {
+            $this->foregroundColor = new Color(0, 0, 0);
+        }
+
+        if ($this->backgroundColor === null) {
+            $this->backgroundColor = new Color(255, 255, 255, 0);
+        }
 
         parent::init();
     }
@@ -75,7 +109,22 @@ class QrCodeWidget extends Widget
         $uri = $this->user->getQrCodeUri($params);
 
         if ($uri) {
-            return Html::img($uri, $this->options);
+            $qrCode = QrCode::create($uri)
+                ->setSize($this->size)
+                ->setErrorCorrectionLevel(ErrorCorrectionLevel::Low)
+                ->setEncoding(new Encoding('UTF-8'))
+                ->setMargin($this->margin)
+                ->setRoundBlockSizeMode(RoundBlockSizeMode::Margin)
+                ->setForegroundColor($this->foregroundColor)
+                ->setBackgroundColor($this->backgroundColor);
+
+            $pngWriter = new PngWriter();
+
+            $result = $pngWriter->write($qrCode);
+
+            $qrCodeUri = $result->getDataUri();
+
+            return Html::img($qrCodeUri, $this->options);
         } else {
             throw new InvalidCallException('Current user is guest, can not render qr code!');
         }

@@ -13,7 +13,8 @@
     "require": {
         "php": ">=7.1",
         "yiisoft/yii2": ">=2.0.13",
-        "spomky-labs/otphp": "^9.0"
+        "spomky-labs/otphp": "^11.3.0",
+        "endroid/qr-code": "^5.1"
     },
     "autoload": {
         "psr-4": {
@@ -29,6 +30,11 @@
     "extra": {
         "branch-alias": {
             "dev-master": "1.0.x-dev"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
         }
     }
 }
