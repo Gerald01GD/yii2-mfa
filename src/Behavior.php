@@ -227,7 +227,7 @@ class Behavior extends BaseBehavior
     /**
      * @var Otp|null an otp instance use to generate and validate otp.
      */
-    private $_otp;
+    protected $_otp;
 
     /**
      * Get an otp instance.
