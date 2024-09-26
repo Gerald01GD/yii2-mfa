@@ -71,7 +71,11 @@ class Otp extends BaseObject
      */
     public function generate(string $secretKey)
     {
-        return $this->createInstance($secretKey)->now();
+        $otp = $this->createInstance($secretKey);
+        if ($otp instanceof HOTP) {
+            return $otp->at($this->hotpCounter ?: 0);
+        }
+        return $otp->now();
     }
 
     /**
@@ -85,7 +89,11 @@ class Otp extends BaseObject
      */
     public function validate(string $secretKey, string $otp)
     {
-        return $this->createInstance($secretKey)->verify($otp);
+        $otp = $this->createInstance($secretKey);
+        if ($otp instanceof HOTP) {
+            $otp->setCounter($this->hotpCounter ?: 0);
+        }
+        return $otp->verify($otp);
     }
 
     /**
