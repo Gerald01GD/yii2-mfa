@@ -185,10 +185,12 @@ class Behavior extends BaseBehavior
     /**
      * Get an identity logged in.
      *
+     * @param bool $remove weather remove the identity logged in after get it.
+     *
      * @return array|null Returns an array of 'identity' and 'duration' if valid, otherwise null.
      * @see saveIdentityLoggedIn()
      */
-    public function getIdentityLoggedIn()
+    public function getIdentityLoggedIn($remove = true)
     {
         $data = Yii::$app->getSession()->get($this->mfaParam);
 
@@ -211,7 +213,7 @@ class Behavior extends BaseBehavior
             }
         }
 
-        $this->removeIdentityLoggedIn();
+        if ($remove) $this->removeIdentityLoggedIn();
 
         return null;
     }
