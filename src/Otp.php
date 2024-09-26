@@ -91,7 +91,7 @@ class Otp extends BaseObject
     {
         $otpInstance = $this->createInstance($secretKey);
         if ($otpInstance instanceof HOTP) {
-            $otpInstance->setCounter($this->hotpCounter ?: 0);
+            return $otpInstance->verify($otp, $this->hotpCounter ?: 0, 1);
         }
         return $otpInstance->verify($otp);
     }
