@@ -57,6 +57,11 @@ class Otp extends BaseObject
     public $qrCodeUriTemplate = 'https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl={PROVISIONING_URI}';
 
     /**
+     * @var ?int the hotp counter. Default is null.
+     */
+    public $hotpCounter = null;
+
+    /**
      * Generate an otp digits.
      *
      * @param string $secretKey the secret key use to generate an otp
@@ -122,7 +127,7 @@ class Otp extends BaseObject
         if ($this->type === self::TOTP) {
             return TOTP::create($secretKey, 30, $this->digest, $this->digits);
         } elseif ($this->type === self::HOTP) {
-            return HOTP::create($secretKey, 0, $this->digest, $this->digits);
+            return HOTP::create($secretKey, $this->hotpCounter ?: 0, $this->digest, $this->digits);
         } else {
             throw new NotSupportedException("An otp type: `{$this->type}` is not supported!");
         }
